@@ -1,6 +1,6 @@
-[![hexlet-check](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-315/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-315/actions)
+[![hexlet-check](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-318/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-318/actions/workflows/hexlet-check.yml)
 
-# Доска объявлений (IaC)
+# Доска объявлений (Observability)
 
 Infrastructure-as-Code repository for the bulletin board application.
 
