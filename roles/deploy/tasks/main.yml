@@ -1,0 +1,31 @@
+- name: Pull an image
+  community.docker.docker_image_pull:
+    name: "{{ deploy_image_name }}"
+
+- name: Start a container
+  community.docker.docker_container:
+      name: "{{ deploy_container_name }}"
+      image: "{{ deploy_image_name }}"
+      state: started
+      restart_policy: always
+      ports:
+        - "{{ deploy_app_loopback_host }}:{{ deploy_app_loopback_port }}:{{ deploy_app_loopback_port }}"
+      env:
+        SPRING_PROFILES_ACTIVE: "{{ deploy_spring_profiles_active }}"
+        SPRING_DATASOURCE_URL: "{{ deploy_spring_datasource_url }}"
+        SPRING_DATASOURCE_USERNAME: "{{ vault_spring_datasource_username }}"
+        SPRING_DATASOURCE_PASSWORD: "{{ vault_spring_datasource_password }}"
+        STORAGE_S3_ACCESSKEY: "{{ vault_storage_s3_accesskey }}"
+        STORAGE_S3_SECRETKEY: "{{ vault_storage_s3_secretkey }}"
+        STORAGE_S3_REGION: "{{ deploy_storage_s3_region }}"
+        STORAGE_S3_BUCKET: "{{ deploy_storage_s3_bucket }}"
+        STORAGE_S3_ENDPOINT: "{{ deploy_storage_s3_endpoint }}"
+  no_log: true
+
+- name: Application is running
+  ansible.builtin.uri:
+    url: "http://{{ deploy_app_loopback_host }}:{{ deploy_app_loopback_port }}/api/bulletins"
+  register: result
+  until: result.status == 200
+  retries: 6
+  delay: 10

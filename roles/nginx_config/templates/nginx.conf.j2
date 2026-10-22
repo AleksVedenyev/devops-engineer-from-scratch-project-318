@@ -1,0 +1,41 @@
+server {
+    listen {{ nginx_config_server_port }};
+
+    server_name {{ nginx_config_app_domain }} www.{{ nginx_config_app_domain }};
+
+    location /.well-known/acme-challenge/ {
+        root {{ app_rootdir }};
+    }
+
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen {{ nginx_config_https_server_port }} ssl http2;
+
+    server_name {{ nginx_config_app_domain }} www.{{ nginx_config_app_domain }};
+
+    ssl_certificate     {{ nginx_config_ssl_certificate }};
+    ssl_certificate_key {{ nginx_config_ssl_certificate_key }};
+    ssl_protocols       TLSv1.2 TLSv1.3;
+    ssl_ciphers         HIGH:!aNULL:!MD5;
+
+    location / {
+        proxy_pass http://{{ nginx_config_app_loopback_host }}:{{ nginx_config_app_loopback_port }};
+        include proxy_params;
+    }
+
+    location /actuator/ {
+        deny all;
+    }
+
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js|svg|webp|woff|woff2|ttf)$ {
+        proxy_pass http://{{ nginx_config_app_loopback_host }}:{{ nginx_config_app_loopback_port }};
+        include proxy_params;
+
+        expires 3d;
+        add_header Cache-Control "public, no-transform";
+    }
+}

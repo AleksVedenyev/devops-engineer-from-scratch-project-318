@@ -1,0 +1,4 @@
+app_user: "deploy"
+app_user_email: "aleks.vedenev@gmail.com"
+app_domain: aleks-devops.ru
+app_rootdir: "/var/www/html"

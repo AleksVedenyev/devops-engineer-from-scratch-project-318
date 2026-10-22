@@ -1,38 +1,75 @@
-# Доска объявлений(Observability)
+[![hexlet-check](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-315/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-315/actions)
 
-[![hexlet-check](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-318/actions/workflows/hexlet-check.yml/badge.svg)](https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-318/actions)
+# Доска объявлений (IaC)
 
-Автоматизация раскатывания контейнеризированного приложения на сервер в облаке
+Infrastructure-as-Code repository for the bulletin board application.
 
-Учебный проект Хекслета: https://ru.hexlet.io/programs/devops-engineer-from-scratch
-Как это должно работать: https://asciinema.org/a/v4evn7XjCdou7Yh71IG0ljb0W
+## Project link
 
-## Стек
+The application repository is available here:
 
-- Инструменты
+- https://github.com/AleksVedenyev/project-devops-deploy
 
-## Установка
+## Description
 
-<!-- Опишите установку: клонирование, зависимости, переменные окружения -->
+This repository contains the infrastructure code used to provision and deploy the application:
+- Ansible playbooks
+- inventory
+- group variables
+- role and collection requirements
+- deployment commands in `Makefile`
+
+The application itself is containerized in the application fork, while this repository is responsible only for infrastructure and deployment.
+
+## Requirements
+
+- Ansible
+- SSH access to the target server
+- Vault password file for encrypted variables, if you use `group_vars/all/vault.yml`
+
+## Ansible dependencies
+
+Third-party roles and collections are listed in `requirements.yml`.
+
+Install them with:
 
 ```bash
-git clone https://github.com/AleksVedenyev/devops-engineer-from-scratch-project-318.git
-cd devops-engineer-from-scratch-project-318
+make requirements
 ```
 
-## Использование
+## Server setup
 
-<!-- Добавьте примеры запуска и запись asciinema — именно это смотрит работодатель -->
+Prepare the target server for deployment with:
 
----
+```bash
+make setup
+```
 
-<details>
-<summary>Автоматические тесты Хекслета</summary>
+This runs playbook.yml and installs Docker, Nginx, Certbot, configures the reverse proxy, and applies basic firewall rules.
 
-Тесты запускаются на каждый коммит. За запуск отвечает файл `.github/workflows/hexlet-check.yml` — не удаляйте и не переименовывайте ни его, ни репозиторий.
+## Deployment
 
-</details>
+The application is deployed with Ansible and can be started with:
 
-## О Хекслете
+```bash
+make deploy
+```
 
-[Хекслет](https://ru.hexlet.io/) — школа программирования: авторские программы обучения с практикой, поддержкой наставников и реальными проектами, которые остаются в резюме. Этот репозиторий — один из таких проектов.
+By default this deploys the latest image tag.
+
+To deploy or roll back to a specific version, pass the immutable SHA-based tag published by CI:
+
+```bash
+make deploy IMAGE_TAG=<git-commit-sha>
+```
+
+## Vault password file
+
+If your group_vars/all/vault.yml contains encrypted values, create a local vault password file in the project root:
+
+```bash
+echo "your-vault-password" > vault-password-file
+chmod 600 vault-password-file
+```
+
+The file is ignored by git and is not committed to the repository.

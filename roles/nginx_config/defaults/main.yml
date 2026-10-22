@@ -1,0 +1,18 @@
+nginx_config_default_nginx_vhost_path: "/etc/nginx/sites-enabled/default"
+nginx_config_server_port: "80"
+nginx_config_https_server_port: "443"
+nginx_config_owner: "root"
+nginx_config_group: "root"
+nginx_config_mode: "0644"
+# Переменные для файла proxy_params
+nginx_config_src_proxy_params: "proxy_params.j2"
+nginx_config_dest_proxy_params: "/etc/nginx/proxy_params"
+# Переменные для конфигурационного файла nginx
+nginx_config_src_nginx_config_file: "nginx.conf.j2"
+nginx_config_dest_nginx_config_file: "/etc/nginx/conf.d/{{ app_domain }}.conf"
+
+nginx_config_ssl_certificate: "/etc/letsencrypt/live/{{ app_domain }}/fullchain.pem"
+nginx_config_ssl_certificate_key: "/etc/letsencrypt/live/{{ app_domain }}/privkey.pem"
+nginx_config_app_domain: aleks-devops.ru
+nginx_config_app_loopback_host: "127.0.0.1"
+nginx_config_app_loopback_port: "8080"
