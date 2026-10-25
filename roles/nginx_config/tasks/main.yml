@@ -3,6 +3,24 @@
     path: "{{ nginx_config_default_nginx_vhost_path }}"
     state: absent
 
+- name: Install passlib on remote server via APT
+  apt:
+    name: python3-passlib
+    state: present
+    update_cache: yes
+  become: true
+
+- name: Add user to .htpasswd
+  community.general.htpasswd:
+    path: "{{ nginx_config_auth_basic_user_file_path }}"
+    name: "{{ nginx_config_auth_basic_username }}"
+    password: "{{ vault_htpasswd_password }}"
+    owner: "{{ nginx_config_owner }}"
+    group: www-data
+    mode: '0640'
+    create: true
+  no_log: true
+
 - name: Copy proxy_params configuration
   ansible.builtin.template:
     src: "{{ nginx_config_src_proxy_params }}"
@@ -18,4 +36,4 @@
     owner: "{{ nginx_config_owner }}"
     group: "{{ nginx_config_group }}"
     mode: "{{ nginx_config_mode }}"
-  notify: Nginx reload
+  notify: [Nginx check config, Nginx reload]

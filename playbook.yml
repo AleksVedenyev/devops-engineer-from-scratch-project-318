@@ -21,6 +21,12 @@
             domains:
               - "{{ app_domain }}"
               - "www.{{ app_domain }}"
+    - role: prometheus.prometheus.node_exporter 
+      tags: setup 
+      vars:
+        node_exporter_enabled_collectors:
+        - systemd
+        - processes
     - { role: ufw_rules, tags: [setup] }
     - { role: deploy, tags: [deploy] }
 

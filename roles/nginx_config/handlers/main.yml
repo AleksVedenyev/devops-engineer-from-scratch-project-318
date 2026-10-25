@@ -1,4 +1,10 @@
+- name: Nginx check config
+  command: nginx -t
+  become: true
+  changed_when: false 
+
 - name: Nginx reload
+  become: true
   service:
     name: nginx
     state: reloaded
