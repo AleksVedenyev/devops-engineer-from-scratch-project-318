@@ -1,0 +1,21 @@
+services:
+  prometheus:
+    image: {{ monitoring_config_prometheus_docker_image }}
+    container_name: prometheus
+    ports:
+      - "{{ monitoring_config_prometheus_port }}:{{ monitoring_config_prometheus_port }}"
+    volumes:
+      - {{ monitoring_config_prometheus_config_file_path }}:{{ monitoring_config_prometheus_config_file_path }}:ro
+      - {{ monitoring_config_prometheus_rules_filepath | dirname }}:{{ monitoring_config_prometheus_rules_filepath | dirname }}:ro
+      - prometheus-data:/prometheus
+    networks:
+      - monitoring
+
+
+volumes:
+  prometheus-data:
+
+networks:
+  monitoring:
+    driver: bridge
+    name: monitoring

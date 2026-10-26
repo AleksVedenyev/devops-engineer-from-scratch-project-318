@@ -1,0 +1,54 @@
+- name: Pull an prometheus image
+  community.docker.docker_image_pull:
+    name: "{{ monitoring_config_prometheus_docker_image }}"
+
+- name: Create directories for Prometheus configuraion
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    owner: "{{ monitoring_config_owner }}"
+    group: "{{ monitoring_config_group }}"
+    mode: '0755'
+  loop:
+    - "{{ monitoring_config_prometheus_config_file_path | dirname }}"
+    - "{{ monitoring_config_prometheus_rules_filepath | dirname }}"
+    - "{{ monitoring_config_docker_compose_filepath }}"
+
+- name: Rendering the main Prometheus configuration file
+  ansible.builtin.template:
+    src: "{{ monitoring_config_prometheus_src_config_file }}"
+    dest: "{{ monitoring_config_prometheus_config_file_path }}"
+    mode: '0644'
+  notify: Reload Prometheus config
+
+- name: Rendering rule files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ monitoring_config_prometheus_rules_filepath | dirname }}/{{ item }}"
+    mode: '0644'
+  loop: "{{ monitoring_config_prometheus_rules_templates }}"
+  notify: Reload Prometheus config
+
+- name: Rendering docker-compose.yml
+  ansible.builtin.template:
+    src: "{{ monitoring_config_docker_compose_src_file }}"
+    dest: "{{ monitoring_config_docker_compose_filepath }}/docker-compose.yml"
+    mode: '0644'
+
+- name: Validating Prometheus config files
+  community.docker.docker_container:
+    name: prometheus_config_validator
+    image: "{{ monitoring_config_prometheus_docker_image }}"
+    state: started
+    detach: false
+    cleanup: true
+    entrypoint: ["/bin/promtool"]
+    command: ["check", "config", "/etc/prometheus/prometheus.yml"]
+    volumes:
+      - "{{ monitoring_config_prometheus_config_file_path }}:{{ monitoring_config_prometheus_config_file_path }}:ro"
+      - "{{ monitoring_config_prometheus_rules_filepath | dirname }}:{{ monitoring_config_prometheus_rules_filepath | dirname }}:ro"
+
+- name: Starting Docker Compose
+  community.docker.docker_compose_v2:
+    project_src: "{{ monitoring_config_docker_compose_filepath }}"
+    state: present

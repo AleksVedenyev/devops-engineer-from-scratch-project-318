@@ -8,3 +8,6 @@ setup:
 
 deploy:
 	ansible-playbook playbook.yml --tags deploy -e "deploy_image_tag=$(IMAGE_TAG)"
+
+monitoring_setup:
+	ansible-playbook playbook.yml --tags monitoring_setup

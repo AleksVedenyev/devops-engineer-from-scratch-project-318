@@ -40,6 +40,13 @@
         append: true
       tags: [setup]
 
+- hosts: monitoring
+  become: true
+  roles:
+    - { role: geerlingguy.docker, tags: [monitoring_setup] }
+    - { role: monitoring_config, tags: [monitoring_setup] }
+    
+
 
 
 

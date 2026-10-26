@@ -1,0 +1,11 @@
+groups:
+  - name: app_alerts
+    rules:
+      - alert: InstanceDown
+        expr: up == 0
+        for: 2m
+        labels:
+          severity: critical
+        annotations:
+          summary: "Узел {{ $labels.instance }} недоступен"
+          description: "Экспортер на {{ $labels.instance }} (job={{ $labels.job }}) не отвечает в течение 2 минут. Проверьте: ping {{ $labels.instance }}, systemctl status node_exporter"

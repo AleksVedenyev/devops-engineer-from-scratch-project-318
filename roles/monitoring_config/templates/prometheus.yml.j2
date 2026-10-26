@@ -1,0 +1,20 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+
+scrape_configs:
+  - job_name: "node"
+    static_configs:
+      - targets: ["{{ monitoring_config_prometheus_config_target_node_exporter }}"]
+
+  - job_name: "app"
+    metrics_path: "{{ monitoring_config_prometheus_config_metrics_path_app }}"
+    scheme: https
+    basic_auth:
+      username: "{{ monitoring_config_auth_basic_username }}"
+      password: "{{ vault_actuator_prometheus_basic_auth_password }}" 
+    static_configs:
+      - targets: ["{{ monitoring_config_prometheus_config_target_app_actuator }}"]
+
+rule_files:
+  - "{{ monitoring_config_prometheus_rules_filepath }}"
