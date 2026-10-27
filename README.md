@@ -25,8 +25,8 @@ The application itself is containerized in the application fork, while this repo
 ## Requirements
 
 - Ansible
-- SSH access to the target server
-- Vault password file for encrypted variables, if you use `/inventory/group_vars/webservers/vault.yml`
+- SSH access to the target servers
+- Vault password file for encrypted variables, if you use `inventory/group_vars/webservers/vault.yml`
 
 ## Ansible dependencies
 
@@ -66,7 +66,7 @@ make deploy IMAGE_TAG=<git-commit-sha>
 
 ## Vault password file
 
-If your `/inventory/group_vars/webservers/vault.yml` contains encrypted values, create a local vault password file in the project root:
+If your `inventory/group_vars/webservers/vault.yml` contains encrypted values, create a local vault password file in the project root:
 
 ```
 echo "your-vault-password" > vault-password-file
@@ -79,10 +79,19 @@ The file is ignored by git and is not committed to the repository.
 
 ### Ports and access
 
+Application server (group `webservers`):
+
 - **80 / 443** — Nginx, public (HTTP to HTTPS redirect, HTTPS reverse proxy).
 - **8080** — application, reachable from `127.0.0.1` only.
 - **9090** — Spring Actuator management port, reachable from `127.0.0.1` only. `health` and `prometheus` are proxied through Nginx.
-- **9100** — Node Exporter. Access must be limited to the monitoring server (UFW / Security Group).
+- **9100** — Node Exporter, allowed only from the internal IP of the monitoring server (UFW and Security Group).
+
+Monitoring server (group `monitoring`):
+
+- **22** — SSH.
+- **9090** — Prometheus UI.
+
+All other ports are closed by UFW and the Security Group.
 
 ### Endpoints through Nginx
 
@@ -94,7 +103,7 @@ Base URL: `https://aleks-devops.ru`
 
 ### Basic authentication
 
-The metrics endpoint is protected by Nginx Basic Auth. The user name and the path to the password file are role variables, the password is stored in Ansible Vault. Node Exporter has no authentication at this stage, access to port 9100 is restricted at the network level.
+The metrics endpoint is protected by Nginx Basic Auth. The user name and the path to the password file are role variables, the password is stored in Ansible Vault. Prometheus uses the same credentials when it scrapes the endpoint. Node Exporter has no authentication, access to port 9100 is restricted at the network level.
 
 ### Nginx logs
 
@@ -138,9 +147,41 @@ Application metrics (Spring Boot Actuator / Micrometer):
 | `jvm_memory_used_bytes` | JVM memory usage |
 | `hikaricp_connections_active` | Active database connections |
 
+### Monitoring server (Prometheus)
+
+Prometheus runs on a separate VM from the `monitoring` group of the inventory. It is deployed with Ansible (role `monitoring_config`) and can be redeployed at any time with one command:
+
+```
+make <monitoring-target>
+```
+
+The role renders the configuration, validates it with `promtool`, and starts Prometheus with Docker Compose.
+
+The configuration and the alert rules are stored in this repository. Sensitive data (the Basic Auth password) is stored in Ansible Vault.
+
+Scrape targets:
+
+| Job | Target | Notes |
+|-----|--------|-------|
+| `node` | internal IP of the application server, port `9100` | Node Exporter |
+| `app` | `https://aleks-devops.ru/actuator/prometheus` | Basic Auth |
+
+Prometheus UI: `http://<monitoring-vm-ip>:9090`. The UI is available without authentication in this learning setup.
+
+- Graph: `http://<monitoring-vm-ip>:9090/graph`
+- Targets: `http://<monitoring-vm-ip>:9090/targets` (Status → Target health)
+
+Check that all targets are up: open the Graph page and run the query:
+
+```
+up
+```
+
+Both series, `job="node"` and `job="app"`, must have the value `1`. 
+
 ### Verification commands
 
-Run on the server (ports 9090 and 9100 are not reachable from outside):
+Run on the application server (ports 9090 and 9100 are not reachable from outside):
 
 ```
 curl http://127.0.0.1:9090/actuator/prometheus
