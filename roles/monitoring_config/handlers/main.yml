@@ -1,4 +1,5 @@
-- name: Reload Prometheus config
-  community.docker.docker_container_exec:
-    container: prometheus
-    command: kill -HUP 1
+- name: Prometheus reload config
+  community.docker.docker_container:
+    name: prometheus
+    state: started
+    kill_signal: SIGHUP

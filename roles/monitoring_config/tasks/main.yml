@@ -19,7 +19,8 @@
     src: "{{ monitoring_config_prometheus_src_config_file }}"
     dest: "{{ monitoring_config_prometheus_config_file_path }}"
     mode: '0644'
-  notify: Reload Prometheus config
+  notify: Prometheus reload config
+  no_log: true
 
 - name: Rendering rule files
   ansible.builtin.copy:
@@ -27,7 +28,7 @@
     dest: "{{ monitoring_config_prometheus_rules_filepath | dirname }}/{{ item }}"
     mode: '0644'
   loop: "{{ monitoring_config_prometheus_rules_templates }}"
-  notify: Reload Prometheus config
+  notify: Prometheus reload config
 
 - name: Rendering docker-compose.yml
   ansible.builtin.template:
