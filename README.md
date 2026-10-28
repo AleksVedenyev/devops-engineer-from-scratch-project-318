@@ -122,17 +122,16 @@ Host metrics (Node Exporter):
 | Area | Metric | What it shows |
 |------|--------|---------------|
 | CPU | `100 - (avg by (instance) (rate(node_cpu_seconds_total{mode="idle"}[5m])) * 100)` | CPU utilization, % |
-| CPU load | `node_load1` | 1-minute load average |
+| CPU load | `node_load1 node_load5 node_load15` | 1, 5, 15-minute load average |
 | Memory | `(1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100` | Memory usage, % |
 | Disk | `node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"} * 100` | Free space on `/`, % |
 | Disk | `node_filesystem_files_free / node_filesystem_files * 100` | Free inodes, % |
 | Disk | `rate(node_disk_reads_completed_total[5m]) + rate(node_disk_writes_completed_total[5m])` | Disk operations per second |
 | Network | `rate(node_network_receive_bytes_total{device!~"lo\|veth.*\|docker.*\|br-.*"}[5m]) * 8` | Incoming traffic, bit/s |
-| Network | `rate(node_network_transmit_bytes_total{device!~"lo\|veth.*\|docker.*\|br-.*"}[5m]) * 8` | Outgoing traffic, bit/s |
+| Network | `-1 * rate(node_network_transmit_bytes_total{device!~"lo\|veth.*\|docker.*\|br-.*"}[5m]) * 8` | Outgoing traffic, bit/s |
 | Network | `rate(node_network_receive_errs_total[5m])` | Receive errors per second |
 | Network | `rate(node_network_transmit_errs_total[5m])` | Transmit errors per second |
 | Processes | `node_procs_running` | Running processes |
-| Processes | `node_procs_blocked` | Processes blocked on I/O |
 | Services | `node_systemd_unit_state{name="nginx.service",state="active"}` | 1 if Nginx is running |
 | Services | `node_systemd_unit_state{name="docker.service",state="active"}` | 1 if Docker is running |
 
@@ -144,20 +143,18 @@ Application metrics (Spring Boot Actuator / Micrometer):
 | `http_server_requests_seconds_count` | HTTP requests by `uri`, `method`, `status` and `outcome` |
 | `http_server_requests_seconds_bucket` | Request duration histogram, used for latency percentiles |
 | `process_cpu_usage` | CPU usage of the application process |
-| `jvm_memory_used_bytes` | JVM memory usage |
-| `hikaricp_connections_active` | Active database connections |
 
 ### Monitoring server (Prometheus)
 
-Prometheus runs on a separate VM from the `monitoring` group of the inventory. It is deployed with Ansible (role `monitoring_config`) and can be redeployed at any time with one command:
+Prometheus and Grafana run on a separate VM from the `monitoring` group of the inventory. They are deployed together with Ansible and can be redeployed at any time with one command:
 
 ```
-make <monitoring-target>
+make monitoring_setup
 ```
 
-The role renders the configuration, validates it with `promtool`, and starts Prometheus with Docker Compose.
+The role renders Prometheus, Grafana, datasource and dashboard provisioning files, validates Prometheus configuration with promtool, and starts both containers with Docker Compose.
 
-The configuration and the alert rules are stored in this repository. Sensitive data (the Basic Auth password) is stored in Ansible Vault.
+The configuration, alert rules, datasource provisioning and dashboard JSON files are stored in this repository. Sensitive data (Grafana admin password and the Basic Auth password for /actuator/prometheus) is stored in Ansible Vault.
 
 Scrape targets:
 
@@ -165,6 +162,21 @@ Scrape targets:
 |-----|--------|-------|
 | `node` | internal IP of the application server, port `9100` | Node Exporter |
 | `app` | `https://aleks-devops.ru/actuator/prometheus` | Basic Auth |
+
+### Grafana
+
+Grafana UI: `http://153.51.117.166:3000`
+
+- Login: `metrics-collector`
+- Password: stored in Ansible Vault
+
+The UI is provisioned automatically from YAML/JSON files in the repository. After changing dashboard JSON or provisioning files, run:
+
+```
+make monitoring_setup
+```
+
+### Prometheus UI
 
 Prometheus UI: `http://<monitoring-vm-ip>:9090`. The UI is available without authentication in this learning setup.
 
