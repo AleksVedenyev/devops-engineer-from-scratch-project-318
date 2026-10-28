@@ -1,9 +1,15 @@
-# Образы и сетевые настройки
+# Образы
 monitoring_config_prometheus_docker_image: "prom/prometheus:latest"
+monitoring_config_grafana_docker_image: "grafana/grafana:latest"
+
+# Сетевые настройки
 monitoring_config_loopback_host: "127.0.0.1"
 monitoring_config_prometheus_port: "9090"
+monitoring_config_grafana_port: "3000"
 monitoring_config_app_host_internal_ip: "10.131.0.14"
 monitoring_config_app_domain: aleks-devops.ru
+
+# Учетные данные
 monitoring_config_owner: "root"
 monitoring_config_group: "root"
 monitoring_config_auth_basic_username: "metrics-collector"
@@ -15,14 +21,31 @@ monitoring_config_prometheus_config_metrics_path_app: "/actuator/prometheus"
 
 # Пути на целевом хосте (ВМ)
 monitoring_config_prometheus_config_file_path: "/etc/prometheus/prometheus.yml"
-monitoring_config_docker_compose_filepath: "/opt/monitoring" 
-monitoring_config_prometheus_rules_filepath: "/etc/prometheus/rules/*.yml"
+monitoring_config_docker_compose_filepath: "/opt/monitoring"
+monitoring_config_prometheus_rules_filepath: "/etc/prometheus/rules"
 
-# Шаблоны (templates внутри роли)
+monitoring_config_grafana_provisioning_dir: "/etc/grafana/provisioning"
+monitoring_config_grafana_prometheus_datasources_filepath: "/etc/grafana/provisioning/datasources/prometheus.yml"
+monitoring_config_grafana_loki_datasources_filepath: "/etc/grafana/provisioning/datasources/loki.yml"
+monitoring_config_grafana_dashboard_configuration_filepath: "/etc/grafana/provisioning/dashboards/dashboard.yml"
+monitoring_config_grafana_dashboard_json_files_path: "/var/lib/grafana/dashboards"
+
+
+# Шаблоны и файлы (templates/files внутри роли)
 monitoring_config_prometheus_src_config_file: "prometheus.yml.j2"
 monitoring_config_docker_compose_src_file: "docker-compose.yml.j2"
+monitoring_config_grafana_prometheus_datasources_src_file: "grafana/provisioning/datasources/prometheus.yml.j2"
+monitoring_config_grafana_dashboard_configuration_src_file: "grafana/provisioning/dashboards/dashboard.yml.j2"
+monitoring_config_grafana_dashboard_json_files_src_path: "grafana/dashboards/"
+monitoring_config_grafana_loki_datasources_src_file: "grafana/provisioning/datasources/loki.yml.j2"
 
 # Список шаблонов правил алертов
 monitoring_config_prometheus_rules_templates:
   - "app_rules.yml"
   - "node_rules.yml"
+
+# Список файлов дашбордов Grafana
+monitoring_config_grafana_dasboards_json_files:
+  - "grafana/dashboards/application_http.json"
+  - "grafana/dashboards/application_state.json"
+  - "grafana/dashboards/system_resources.json"

@@ -13,7 +13,7 @@
         - "{{ deploy_app_loopback_host }}:{{ deploy_management_server_port }}:{{ deploy_management_server_port }}"
       env:
         SPRING_PROFILES_ACTIVE: "{{ deploy_spring_profiles_active }}"
-        MANAGEMENT_SERVER_PORT: "{{ deploy_management_server_port | default('9090') }}"
+        MANAGEMENT_SERVER_PORT: "{{ deploy_management_server_port }}"
         SPRING_DATASOURCE_URL: "{{ deploy_spring_datasource_url }}"
         SPRING_DATASOURCE_USERNAME: "{{ vault_spring_datasource_username }}"
         SPRING_DATASOURCE_PASSWORD: "{{ vault_spring_datasource_password }}"

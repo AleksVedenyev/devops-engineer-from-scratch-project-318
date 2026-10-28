@@ -1,7 +1,13 @@
+# Скачиваем образ Prometheus
 - name: Pull an prometheus image
   community.docker.docker_image_pull:
     name: "{{ monitoring_config_prometheus_docker_image }}"
 
+- name: Pull an grafana image
+  community.docker.docker_image_pull:
+    name: "{{ monitoring_config_grafana_docker_image }}"
+
+# Создаем директории для конфигурации Prometheus, Grafana
 - name: Create directories for Prometheus configuraion
   ansible.builtin.file:
     path: "{{ item }}"
@@ -11,9 +17,13 @@
     mode: '0755'
   loop:
     - "{{ monitoring_config_prometheus_config_file_path | dirname }}"
-    - "{{ monitoring_config_prometheus_rules_filepath | dirname }}"
+    - "{{ monitoring_config_prometheus_rules_filepath }}"
     - "{{ monitoring_config_docker_compose_filepath }}"
+    - "{{ monitoring_config_grafana_prometheus_datasources_filepath | dirname }}"
+    - "{{ monitoring_config_grafana_dashboard_configuration_filepath | dirname }}"
+    - "{{ monitoring_config_grafana_dashboard_json_files_path }}"
 
+# Копируем шаблон конфигурации Prometheus и правил алертов на целевой хост
 - name: Rendering the main Prometheus configuration file
   ansible.builtin.template:
     src: "{{ monitoring_config_prometheus_src_config_file }}"
@@ -22,20 +32,51 @@
   notify: Prometheus reload config
   no_log: true
 
-- name: Rendering rule files
+- name: Copying rule files
   ansible.builtin.copy:
     src: "{{ item }}"
-    dest: "{{ monitoring_config_prometheus_rules_filepath | dirname }}/{{ item }}"
+    dest: "{{ monitoring_config_prometheus_rules_filepath }}/{{ item }}"
     mode: '0644'
   loop: "{{ monitoring_config_prometheus_rules_templates }}"
   notify: Prometheus reload config
 
+# Копируем шаблон конфигурации Grafana datasources для Prometheus на целевой хост
+- name: Rendering the Grafana datasources Prometheus configuration file
+  ansible.builtin.template:
+    src: "{{ monitoring_config_grafana_prometheus_datasources_src_file }}"
+    dest: "{{ monitoring_config_grafana_prometheus_datasources_filepath }}"
+    mode: '0644'
+
+# Копируем шаблон конфигурации Grafana datasources для Loki на целевой хост
+- name: Rendering the Grafana datasources Loki configuration file
+  ansible.builtin.template:
+    src: "{{ monitoring_config_grafana_loki_datasources_src_file }}"
+    dest: "{{ monitoring_config_grafana_loki_datasources_filepath }}"
+    mode: '0644'
+
+# Копируем шаблон конфигурации Grafana dashboards на целевой хост
+- name: Rendering the Grafana dashboard configuration file
+  ansible.builtin.template:
+    src: "{{ monitoring_config_grafana_dashboard_configuration_src_file }}"
+    dest: "{{ monitoring_config_grafana_dashboard_configuration_filepath }}"
+    mode: '0644'
+
+# Копируем JSON файлы дашбордов Grafana на целевой хост
+- name: Copying Grafana dashboard JSON files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ monitoring_config_grafana_dashboard_json_files_path }}/{{ item | basename }}"
+    mode: '0644'
+  loop: "{{ monitoring_config_grafana_dasboards_json_files }}"
+
+# Копируем шаблон docker-compose.yml на целевой хост
 - name: Rendering docker-compose.yml
   ansible.builtin.template:
     src: "{{ monitoring_config_docker_compose_src_file }}"
     dest: "{{ monitoring_config_docker_compose_filepath }}/docker-compose.yml"
     mode: '0644'
 
+# Валидируем конфигурацию Prometheus
 - name: Validating Prometheus config files
   community.docker.docker_container:
     name: prometheus_config_validator
@@ -47,8 +88,9 @@
     command: ["check", "config", "/etc/prometheus/prometheus.yml"]
     volumes:
       - "{{ monitoring_config_prometheus_config_file_path }}:{{ monitoring_config_prometheus_config_file_path }}:ro"
-      - "{{ monitoring_config_prometheus_rules_filepath | dirname }}:{{ monitoring_config_prometheus_rules_filepath | dirname }}:ro"
+      - "{{ monitoring_config_prometheus_rules_filepath }}:{{ monitoring_config_prometheus_rules_filepath }}:ro"
 
+# Запускаем Prometheus и Grafana через Docker Compose
 - name: Starting Docker Compose
   community.docker.docker_compose_v2:
     project_src: "{{ monitoring_config_docker_compose_filepath }}"

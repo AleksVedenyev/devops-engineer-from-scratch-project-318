@@ -17,4 +17,4 @@ scrape_configs:
       - targets: ["{{ monitoring_config_prometheus_config_target_app_actuator }}"]
 
 rule_files:
-  - "{{ monitoring_config_prometheus_rules_filepath }}"
+  - "{{ monitoring_config_prometheus_rules_filepath }}/*.yml"

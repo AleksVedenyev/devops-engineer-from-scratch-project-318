@@ -6,14 +6,30 @@ services:
       - "{{ monitoring_config_prometheus_port }}:{{ monitoring_config_prometheus_port }}"
     volumes:
       - {{ monitoring_config_prometheus_config_file_path }}:{{ monitoring_config_prometheus_config_file_path }}:ro
-      - {{ monitoring_config_prometheus_rules_filepath | dirname }}:{{ monitoring_config_prometheus_rules_filepath | dirname }}:ro
+      - {{ monitoring_config_prometheus_rules_filepath }}:{{ monitoring_config_prometheus_rules_filepath }}:ro
       - prometheus-data:/prometheus
+    networks:
+      - monitoring
+
+  grafana:
+    image: {{ monitoring_config_grafana_docker_image }}
+    container_name: grafana
+    ports:
+      - "{{ monitoring_config_grafana_port }}:{{ monitoring_config_grafana_port }}"
+    volumes:
+      - {{ monitoring_config_grafana_provisioning_dir }}:{{ monitoring_config_grafana_provisioning_dir }}:ro
+      - {{ monitoring_config_grafana_dashboard_json_files_path }}:{{ monitoring_config_grafana_dashboard_json_files_path }}:ro
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER={{ monitoring_config_auth_basic_username }}
+      - GF_SECURITY_ADMIN_PASSWORD={{ vault_grafana_auth_password }}
     networks:
       - monitoring
 
 
 volumes:
   prometheus-data:
+  grafana-data:
 
 networks:
   monitoring:
