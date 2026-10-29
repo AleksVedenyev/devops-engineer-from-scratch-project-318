@@ -164,8 +164,8 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
-          noDataState: KeepLastState
-          execErrState: KeepLastState
+          noDataState: KeepLast
+          execErrState: Error
           for: 5m
           annotations:
             description: "Доля серверных ошибок (5xx) за последние 5 минут составляет {{ printf \"%.2f\" $values.C.Value }}% от общего трафика. \n\nПодробности:\n• Приложение: {{ $labels.job }}\n• Инстанс: {{ $labels.instance }}\n• Эндпоинт: {{ $labels.uri }}\n• Тип запроса: {{ $labels.method }}"
