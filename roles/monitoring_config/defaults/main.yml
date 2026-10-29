@@ -9,6 +9,11 @@ monitoring_config_grafana_port: "3000"
 monitoring_config_app_host_internal_ip: "10.131.0.14"
 monitoring_config_app_domain: aleks-devops.ru
 
+# Настройки для SMTP сервера Grafana
+monitoring_config_grafana_smtp_host: "smtp.yandex.ru:465"
+monitoring_config_grafana_smtp_user: "okato88@yandex.ru"
+monitoring_config_grafana_smtp_name: "Grafana Alerts"
+
 # Учетные данные
 monitoring_config_owner: "root"
 monitoring_config_group: "root"
@@ -29,6 +34,7 @@ monitoring_config_grafana_prometheus_datasources_filepath: "/etc/grafana/provisi
 monitoring_config_grafana_loki_datasources_filepath: "/etc/grafana/provisioning/datasources/loki.yml"
 monitoring_config_grafana_dashboard_configuration_filepath: "/etc/grafana/provisioning/dashboards/dashboard.yml"
 monitoring_config_grafana_dashboard_json_files_path: "/var/lib/grafana/dashboards"
+monitoring_config_grafana_alerting_files_path: "/etc/grafana/provisioning/alerting"
 
 
 # Шаблоны и файлы (templates/files внутри роли)
@@ -36,7 +42,6 @@ monitoring_config_prometheus_src_config_file: "prometheus.yml.j2"
 monitoring_config_docker_compose_src_file: "docker-compose.yml.j2"
 monitoring_config_grafana_prometheus_datasources_src_file: "grafana/provisioning/datasources/prometheus.yml.j2"
 monitoring_config_grafana_dashboard_configuration_src_file: "grafana/provisioning/dashboards/dashboard.yml.j2"
-monitoring_config_grafana_dashboard_json_files_src_path: "grafana/dashboards/"
 monitoring_config_grafana_loki_datasources_src_file: "grafana/provisioning/datasources/loki.yml.j2"
 
 # Список шаблонов правил алертов
@@ -49,3 +54,8 @@ monitoring_config_grafana_dasboards_json_files:
   - "grafana/dashboards/application_http.json"
   - "grafana/dashboards/application_state.json"
   - "grafana/dashboards/system_resources.json"
+  - "grafana/dashboards/status_page.json"
+
+# Список правил алертов Grafana
+monitoring_config_grafana_alert_rules_files:
+  - "grafana/alerts/alerts.yaml"

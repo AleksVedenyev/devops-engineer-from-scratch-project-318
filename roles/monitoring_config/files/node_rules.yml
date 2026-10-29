@@ -1,5 +1,5 @@
 groups:
-  - name: app_alerts
+  - name: node_alerts
     rules:
       - alert: InstanceDown
         expr: up == 0

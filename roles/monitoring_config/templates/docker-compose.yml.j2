@@ -23,6 +23,12 @@ services:
     environment:
       - GF_SECURITY_ADMIN_USER={{ monitoring_config_auth_basic_username }}
       - GF_SECURITY_ADMIN_PASSWORD={{ vault_grafana_auth_password }}
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST={{ monitoring_config_grafana_smtp_host }}
+      - GF_SMTP_USER={{ monitoring_config_grafana_smtp_user }}
+      - GF_SMTP_PASSWORD={{ vault_grafana_smtp_password }}
+      - GF_SMTP_FROM_ADDRESS={{ monitoring_config_grafana_smtp_user }}
+      - GF_SMTP_FROM_NAME={{ monitoring_config_grafana_smtp_name }}
     networks:
       - monitoring
 

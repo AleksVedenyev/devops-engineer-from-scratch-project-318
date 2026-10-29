@@ -22,6 +22,7 @@
     - "{{ monitoring_config_grafana_prometheus_datasources_filepath | dirname }}"
     - "{{ monitoring_config_grafana_dashboard_configuration_filepath | dirname }}"
     - "{{ monitoring_config_grafana_dashboard_json_files_path }}"
+    - "{{ monitoring_config_grafana_alerting_files_path }}"
 
 # Копируем шаблон конфигурации Prometheus и правил алертов на целевой хост
 - name: Rendering the main Prometheus configuration file
@@ -68,6 +69,15 @@
     dest: "{{ monitoring_config_grafana_dashboard_json_files_path }}/{{ item | basename }}"
     mode: '0644'
   loop: "{{ monitoring_config_grafana_dasboards_json_files }}"
+
+# Копируем файлы правил алертов Grafana на целевой хост
+- name: Copying Grafana alert rules files
+  ansible.builtin.copy:
+    src: "{{ item }}"
+    dest: "{{ monitoring_config_grafana_alerting_files_path }}/{{ item | basename }}"
+    mode: '0644'
+  loop: "{{ monitoring_config_grafana_alert_rules_files }}"
+
 
 # Копируем шаблон docker-compose.yml на целевой хост
 - name: Rendering docker-compose.yml
