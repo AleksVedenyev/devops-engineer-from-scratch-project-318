@@ -191,6 +191,58 @@ up
 
 Both series, `job="node"` and `job="app"`, must have the value `1`. 
 
+### Alerting
+
+Grafana alerting is configured on the monitoring server.
+
+#### Critical events
+
+The following alert rules are configured:
+
+- application down / no metrics for a configured period of time
+- node exporter / host down / no metrics for a configured period of time
+- high CPU usage
+- high memory usage
+- low disk space
+- high 5xx error rate
+
+#### Contact point
+
+Alerts are delivered by email through a Grafana contact point.
+
+- SMTP settings are passed to the Grafana container through environment variables
+- the SMTP password is stored in Ansible Vault
+- the recipient address is configured in Grafana UI
+
+#### Alert rules
+
+Alert rules are stored in the repository and are deployed together with the monitoring stack by Ansible.
+
+To inspect the rules in Grafana:
+
+- open Grafana UI
+- go to **Alerting → Alert rules**
+
+#### How to trigger a test alert
+
+You can trigger alerts manually by creating the corresponding condition on the application or monitoring host, for example:
+
+- stop the application container to trigger `up == 0`
+- increase CPU load on the application server to trigger the CPU alert
+- fill the disk or lower the free disk threshold to trigger the disk alert
+
+#### Verification
+
+A screenshot of a firing alert is stored in the `assets/` directory.
+
+#### Update monitoring stack
+
+After changing alert rules or dashboards, redeploy the monitoring stack with:
+
+```
+make monitoring_setup
+```
+
 ### Verification commands
 
 Run on the application server (ports 9090 and 9100 are not reachable from outside):
