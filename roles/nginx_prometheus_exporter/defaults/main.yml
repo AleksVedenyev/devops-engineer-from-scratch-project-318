@@ -1,0 +1,5 @@
+nginx_prometheus_exporter_docker_image: "nginx/nginx-prometheus-exporter:latest"
+nginx_prometheus_exporter_container_name: "nginx-prometheus-exporter"
+nginx_prometheus_exporter_loopback_port: "9113"
+nginx_prometheus_exporter_endpoint: "/stub_status"
+nginx_prometheus_exporter_hostgateway_name: "172.17.0.1"

@@ -17,6 +17,8 @@ nginx_config_app_domain: aleks-devops.ru
 nginx_config_app_loopback_host: "127.0.0.1"
 nginx_config_app_loopback_port: "8080"
 nginx_config_app_management_server_port: "9090"
+# Адрес контейнера, из которого nginx-exporter ходит на /stub_status 
+nginx_config_exporter_docker_address: "172.17.0.0/16"
 # Устанавливаем формат лога JSON в конексте http
 nginx_config_json_combined_log_format: |
   log_format json_combined escape=json

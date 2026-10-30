@@ -6,6 +6,8 @@ monitoring_config_grafana_docker_image: "grafana/grafana:latest"
 monitoring_config_loopback_host: "127.0.0.1"
 monitoring_config_prometheus_port: "9090"
 monitoring_config_grafana_port: "3000"
+monitoring_config_node_exporter_port: "9100"
+monitoring_config_node_nginx_exporter_port: "9113"
 monitoring_config_app_host_internal_ip: "10.131.0.14"
 monitoring_config_app_domain: aleks-devops.ru
 
@@ -20,9 +22,10 @@ monitoring_config_group: "root"
 monitoring_config_auth_basic_username: "metrics-collector"
 
 # Таргеты для скрапинга
-monitoring_config_prometheus_config_target_node_exporter: "{{ monitoring_config_app_host_internal_ip }}:9100"
+monitoring_config_prometheus_config_target_node_exporter: "{{ monitoring_config_app_host_internal_ip }}:{{ monitoring_config_node_exporter_port }}"
 monitoring_config_prometheus_config_target_app_actuator: "{{ monitoring_config_app_domain }}"
 monitoring_config_prometheus_config_metrics_path_app: "/actuator/prometheus"
+monitoring_config_prometheus_config_target_nginx_exporter: "{{ monitoring_config_app_host_internal_ip }}:{{ monitoring_config_node_nginx_exporter_port }}" 
 
 # Пути на целевом хосте (ВМ)
 monitoring_config_prometheus_config_file_path: "/etc/prometheus/prometheus.yml"
@@ -55,6 +58,7 @@ monitoring_config_grafana_dasboards_json_files:
   - "grafana/dashboards/application_state.json"
   - "grafana/dashboards/system_resources.json"
   - "grafana/dashboards/status_page.json"
+  - "grafana/dashboards/reverse_proxy.json"
 
 # Список правил алертов Grafana
 monitoring_config_grafana_alert_rules_files:

@@ -7,6 +7,10 @@ scrape_configs:
     static_configs:
       - targets: ["{{ monitoring_config_prometheus_config_target_node_exporter }}"]
 
+  - job_name: "nginx"
+    static_configs:
+      - targets: ["{{ monitoring_config_prometheus_config_target_nginx_exporter }}"]
+
   - job_name: "app"
     metrics_path: "{{ monitoring_config_prometheus_config_metrics_path_app }}"
     scheme: https

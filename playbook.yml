@@ -27,6 +27,7 @@
         node_exporter_enabled_collectors:
         - systemd
         - processes
+    - { role: nginx_prometheus_exporter, tags: [setup] }
     - { role: ufw_rules, tags: [setup] }
     - { role: deploy, tags: [deploy] }
 

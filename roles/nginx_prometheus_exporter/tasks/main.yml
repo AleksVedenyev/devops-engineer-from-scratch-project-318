@@ -1,0 +1,16 @@
+- name: Pull an nginx-prometheus-exporter image
+  community.docker.docker_image_pull:
+    name: "{{ nginx_prometheus_exporter_docker_image }}"
+
+- name: Start nginx-prometheus-exporter container
+  community.docker.docker_container:
+      name: "{{ nginx_prometheus_exporter_container_name }}"
+      image: "{{ nginx_prometheus_exporter_docker_image }}"
+      state: started
+      restart_policy: always
+      ports:
+        - "{{ nginx_prometheus_exporter_loopback_port }}:{{ nginx_prometheus_exporter_loopback_port }}"
+      command:
+        - "--nginx.scrape-uri=http://host.docker.internal{{ nginx_prometheus_exporter_endpoint }}"
+      etc_hosts:
+        host.docker.internal: "{{ nginx_prometheus_exporter_hostgateway_name }}"

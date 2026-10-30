@@ -3,3 +3,4 @@ ufw_allowed_ports:
   - { port: "80" }
   - { port: "443" }
   - { port: "9100", from_ip: "10.131.0.4" } 
+  - { port: "9113", from_ip: "10.131.0.4" } 
