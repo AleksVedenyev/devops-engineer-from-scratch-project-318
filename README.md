@@ -191,6 +191,58 @@ up
 
 Both series, `job="node"` and `job="app"`, must have the value `1`. 
 
+### Nginx Prometheus Exporter
+
+Nginx Prometheus Exporter is installed by Ansible on the application server as a Docker container and is restarted automatically.
+
+The exporter is connected to the Nginx `stub_status` endpoint, which is exposed on the application server and restricted by IP allowlist.
+
+#### stub_status endpoint
+
+The `stub_status` endpoint is available on:
+
+```
+http://localhost/stub_status
+```
+Access is restricted to the local host and the monitoring server network.
+
+#### Scrape target
+
+Prometheus scrapes the Nginx exporter with a dedicated job:
+
+- `job="nginx"`
+
+The exporter exposes the following Nginx metrics:
+
+- `nginx_http_requests_total`
+- `nginx_connections_active`
+- `nginx_connections_reading`
+- `nginx_connections_writing`
+- `nginx_connections_waiting`
+- `nginx_up`
+
+#### Nginx dashboard
+
+Grafana contains a separate dashboard for Nginx metrics with the following panels:
+
+- HTTP Request Rate (RPS)
+- Nginx Connections States
+- Nginx Active Connections
+- Nginx Availability
+
+#### Verification commands
+
+Run on the application server:
+
+```
+curl http://localhost/stub_status
+```
+Run on the monitoring server / through Prometheus UI:
+
+- open the **Reverse Proxy** Grafana dashboard
+- verify that `nginx_up == 1`
+- verify that `nginx_connections_active`, `nginx_connections_reading`, `nginx_connections_writing`, `nginx_connections_waiting` and `rate(nginx_http_requests_total[1m])` are present
+
 ### Alerting
 
 Grafana alerting is configured on the monitoring server.
