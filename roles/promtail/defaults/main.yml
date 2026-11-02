@@ -14,5 +14,3 @@ promtail_config_owner: "root"
 promtail_config_group: "root"
 promtail_app_container_name: "project-devops-deploy"
 promtail_loki_server_url: "http://{{ promtail_loki_server_ip }}:{{ promtail_loki_server_port }}/loki/api/v1/push"
-
-

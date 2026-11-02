@@ -1,13 +1,14 @@
+---
 - name: Remove default Nginx vhost
   ansible.builtin.file:
     path: "{{ nginx_config_default_nginx_vhost_path }}"
     state: absent
 
 - name: Install passlib on remote server via APT
-  apt:
+  ansible.builtin.apt:
     name: python3-passlib
     state: present
-    update_cache: yes
+    update_cache: true
   become: true
 
 - name: Add user to .htpasswd

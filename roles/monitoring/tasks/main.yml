@@ -89,8 +89,7 @@
     src: "{{ monitoring_loki_src_config_file }}"
     dest: "{{ monitoring_loki_config_filepath }}"
     mode: '0644'
-  no_log: true  
-
+  no_log: true
 
 # Копируем шаблон docker-compose.yml на целевой хост
 - name: Rendering docker-compose.yml

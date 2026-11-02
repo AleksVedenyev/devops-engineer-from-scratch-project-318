@@ -1,4 +1,6 @@
-- hosts: webservers
+---
+- name: Настройка веб-серверов и деплой приложения
+  hosts: webservers
   become: true
   roles:
     - { role: geerlingguy.docker, tags: [setup] }
@@ -13,7 +15,7 @@
         certbot_auto_renew_minute: "30"
         certbot_auto_renew_options: "--quiet --deploy-hook 'systemctl reload nginx'"
         certbot_create_method: webroot
-        certbot_create_if_missing: True
+        certbot_create_if_missing: true
         certbot_admin_email: "{{ app_user_email }}"
         certbot_certs:
           - name: "{{ app_domain }}"
@@ -21,12 +23,12 @@
             domains:
               - "{{ app_domain }}"
               - "www.{{ app_domain }}"
-    - role: prometheus.prometheus.node_exporter 
-      tags: setup 
+    - role: prometheus.prometheus.node_exporter
+      tags: setup
       vars:
         node_exporter_enabled_collectors:
-        - systemd
-        - processes
+          - systemd
+          - processes
     - { role: nginx_prometheus_exporter, tags: [setup] }
     - { role: ufw_rules, tags: [setup] }
     - { role: promtail, tags: [setup] }
@@ -42,13 +44,9 @@
         append: true
       tags: [setup]
 
-- hosts: monitoring
+- name: Настройка инфраструктуры мониторинга
+  hosts: monitoring
   become: true
   roles:
     - { role: geerlingguy.docker, tags: [monitoring_setup] }
     - { role: monitoring, tags: [monitoring_setup] }
-    
-
-
-
-

@@ -1,20 +1,20 @@
-
+---
 - name: Create directory for Promtail postions file
   ansible.builtin.file:
     path: "{{ item }}"
     state: directory
     owner: "{{ promtail_config_owner }}"
     group: "{{ promtail_config_group }}"
-    mode: '0755'
-  loop: 
-    - "{{ promtail_positions_directory | dirname}}"
+    mode: "0755"
+  loop:
+    - "{{ promtail_positions_directory | dirname }}"
     - "{{ promtail_config_filepath | dirname }}"
 
 - name: Rendering the Promtail configuration file
   ansible.builtin.template:
     src: "{{ promtail_config_src_file }}"
     dest: "{{ promtail_config_filepath }}"
-    mode: '0644'
+    mode: "0644"
 
 - name: Pull an Promtail image
   community.docker.docker_image_pull:
@@ -22,18 +22,17 @@
 
 - name: Start Promtail container
   community.docker.docker_container:
-      name: "{{ promtail_container_name }}"
-      image: "{{ promtail_docker_image }}"
-      user: "{{ promtail_config_owner }}:{{ promtail_config_owner }}"
-      state: started
-      restart_policy: unless-stopped
-      ports:  
-        - "{{ promtail_http_listen_port }}:{{ promtail_http_listen_port }}"
-      volumes:
-        - "{{ promtail_positions_directory | dirname }}:{{ promtail_positions_directory | dirname }}"
-        - "{{ promtail_config_filepath }}:{{ promtail_config_filepath }}:ro"
-        - "{{ promtail_docker_containers_path }}:{{ promtail_docker_containers_path }}:ro"
-        - "{{ promtail_docker_sock_path }}:{{ promtail_docker_sock_path }}:ro"
-        - "{{ promtail_nginx_logs_path }}:{{ promtail_nginx_logs_path }}:ro"
-      command:
-        -config.file={{ promtail_config_filepath }}
+    name: "{{ promtail_container_name }}"
+    image: "{{ promtail_docker_image }}"
+    user: "{{ promtail_config_owner }}:{{ promtail_config_owner }}"
+    state: started
+    restart_policy: unless-stopped
+    ports:
+      - "{{ promtail_http_listen_port }}:{{ promtail_http_listen_port }}"
+    volumes:
+      - "{{ promtail_positions_directory | dirname }}:{{ promtail_positions_directory | dirname }}"
+      - "{{ promtail_config_filepath }}:{{ promtail_config_filepath }}:ro"
+      - "{{ promtail_docker_containers_path }}:{{ promtail_docker_containers_path }}:ro"
+      - "{{ promtail_docker_sock_path }}:{{ promtail_docker_sock_path }}:ro"
+      - "{{ promtail_nginx_logs_path }}:{{ promtail_nginx_logs_path }}:ro"
+    command: -config.file={{ promtail_config_filepath }}

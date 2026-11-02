@@ -1,10 +1,11 @@
+---
 - name: Nginx check config
-  command: nginx -t
+  ansible.builtin.command: nginx -t
   become: true
-  changed_when: false 
+  changed_when: false
 
 - name: Nginx reload
   become: true
-  service:
+  ansible.builtin.service:
     name: nginx
     state: reloaded
