@@ -22,11 +22,38 @@ This repository contains the infrastructure code used to provision, deploy and m
 
 The application itself is containerized in the application fork, while this repository is responsible only for infrastructure, deployment and monitoring agents.
 
+## Quick start from scratch
+
+1. Fork this repository and clone your fork locally.
+2. Prepare SSH keys for access to the application and monitoring servers.
+3. Create `vault-password-file` in the project root if you use encrypted variables.
+4. Install Ansible dependencies:
+```
+make requirements
+```
+5. Prepare the application server:
+```
+make setup
+```
+6. Deploy the application:
+```
+make deploy
+```
+7. Deploy the monitoring stack:
+```
+make monitoring_setup
+```
+8. Verify that the application, monitoring dashboards and logs are available:
+  - Application: https://aleks-devops.ru
+  - Grafana: http://153.51.117.166:3000
+  - Prometheus: http://153.51.117.166:9090
+
 ## Requirements
 
 - Ansible
+- ansile-lint
 - SSH access to the target servers
-- Vault password file for encrypted variables, if you use `inventory/group_vars/webservers/vault.yml`
+- Vault password file for encrypted variables, if you use `inventory/group_vars/*/vault.yml`
 
 ## Ansible dependencies
 
@@ -66,40 +93,54 @@ make deploy IMAGE_TAG=<git-commit-sha>
 
 ## Vault password file
 
-If your `inventory/group_vars/webservers/vault.yml` contains encrypted values, create a local vault password file in the project root:
+If your `inventory/group_vars/*/vault.yml` contains encrypted values, create a local vault password file in the project root:
 
 ```
 echo "your-vault-password" > vault-password-file
 chmod 600 vault-password-file
 ```
-
 The file is ignored by git and is not committed to the repository.
 
+
+## Checks
+
+The repository includes the following helper targets:
+
+- `make lint` — run `ansible-lint`
+- `make test` — run smoke check for the infrastructure
+- `make smoke` — quick services availability checks with `curl`
+
+These checks help validate that the playbooks are repeatable and the deployed services are reachable.
+
+## Ports, URLs and notifications
+
+### Application server
+
+- `80** / `443` — Nginx
+- `8080` — application (localhost only)
+- `9090` — Spring Actuator management port (localhost only)
+- `9100` — Node Exporter, allowed only from the internal IP of the monitoring server (UFW and Security Group).
+
+### Monitoring server
+
+- `3000` — Grafana
+- `9090` — Prometheus
+- `3100` — Loki
+- `9113` — Nginx exporter
+
+### URLs
+
+- Application: `https://aleks-devops.ru`
+- Grafana: `http://153.51.117.166:3000`
+- Prometheus: `http://153.51.117.166:9090`
+- Loki datasource is available in Grafana provisioning
+
+### Notifications
+
+- Grafana alerting uses email
+- SMTP credentials are stored in Ansible Vault
+
 ## Observability
-
-### Ports and access
-
-Application server (group `webservers`):
-
-- **80 / 443** — Nginx, public (HTTP to HTTPS redirect, HTTPS reverse proxy).
-- **8080** — application, reachable from `127.0.0.1` only.
-- **9090** — Spring Actuator management port, reachable from `127.0.0.1` only. `health` and `prometheus` are proxied through Nginx.
-- **9100** — Node Exporter, allowed only from the internal IP of the monitoring server (UFW and Security Group).
-
-Monitoring server (group `monitoring`):
-
-- **22** — SSH.
-- **9090** — Prometheus UI.
-
-All other ports are closed by UFW and the Security Group.
-
-### Endpoints through Nginx
-
-Base URL: `https://aleks-devops.ru`
-
-- `/actuator/health` — open, returns status only.
-- `/actuator/prometheus` — protected with Basic Auth.
-- any other `/actuator/...` — denied.
 
 ### Basic authentication
 
@@ -146,13 +187,13 @@ Application metrics (Spring Boot Actuator / Micrometer):
 
 ### Monitoring server (Prometheus)
 
-Prometheus and Grafana run on a separate VM from the `monitoring` group of the inventory. They are deployed together with Ansible and can be redeployed at any time with one command:
+Prometheus Grafana and Loki run on a separate VM from the `monitoring` group of the inventory. They are deployed together with Ansible and can be redeployed at any time with one command:
 
 ```
 make monitoring_setup
 ```
 
-The role renders Prometheus, Grafana, datasource and dashboard provisioning files, validates Prometheus configuration with promtool, and starts both containers with Docker Compose.
+The role renders Prometheus, Grafana, Loki, datasource and dashboard provisioning files, validates Prometheus configuration with promtool, and starts all containers with Docker Compose.
 
 The configuration, alert rules, datasource provisioning and dashboard JSON files are stored in this repository. Sensitive data (Grafana admin password and the Basic Auth password for /actuator/prometheus) is stored in Ansible Vault.
 
@@ -354,7 +395,7 @@ The logs appear in Loki and are visible in Grafana.
 
 Useful queries:
 - `{job="nginx"}`
-- `{job="nginx_access", status="502"}`
+- `{job="nginx", status="502"}`
 
 After changing Promtail, Loki or log dashboards, redeploy the monitoring stack with:
 
@@ -367,7 +408,6 @@ make monitoring_setup
 Run on the application server (ports 9090 and 9100 are not reachable from outside):
 
 ```
-curl http://127.0.0.1:9090/actuator/prometheus
 curl http://127.0.0.1:9090/actuator/health
 curl http://127.0.0.1:9100/metrics
 ```
@@ -379,5 +419,8 @@ curl -i https://aleks-devops.ru/actuator/health
 curl -i https://aleks-devops.ru/actuator/prometheus
 curl -u <user>:<password> https://aleks-devops.ru/actuator/prometheus
 ```
-
 The second command returns `401`, the other two return `200`.
+
+## Assets
+
+Screenshots and screencasts required by the project are stored in `assets/`.
