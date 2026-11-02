@@ -1,0 +1,58 @@
+services:
+  prometheus:
+    image: {{ monitoring_prometheus_docker_image }}
+    container_name: prometheus
+    restart: unless-stopped
+    ports:
+      - "{{ monitoring_prometheus_port }}:{{ monitoring_prometheus_port }}"
+    volumes:
+      - {{ monitoring_prometheus_config_file_path }}:{{ monitoring_prometheus_config_file_path }}:ro
+      - {{ monitoring_prometheus_rules_filepath }}:{{ monitoring_prometheus_rules_filepath }}:ro
+      - prometheus-data:/prometheus
+    networks:
+      - monitoring
+
+  grafana:
+    image: {{ monitoring_grafana_docker_image }}
+    container_name: grafana
+    restart: unless-stopped
+    ports:
+      - "{{ monitoring_grafana_port }}:{{ monitoring_grafana_port }}"
+    volumes:
+      - {{ monitoring_grafana_provisioning_dir }}:{{ monitoring_grafana_provisioning_dir }}:ro
+      - {{ monitoring_grafana_dashboard_json_files_path }}:{{ monitoring_grafana_dashboard_json_files_path }}:ro
+      - grafana-data:/var/lib/grafana
+    environment:
+      - GF_SECURITY_ADMIN_USER={{ monitoring_auth_basic_username }}
+      - GF_SECURITY_ADMIN_PASSWORD={{ vault_grafana_auth_password }}
+      - GF_SMTP_ENABLED=true
+      - GF_SMTP_HOST={{ monitoring_grafana_smtp_host }}
+      - GF_SMTP_USER={{ monitoring_grafana_smtp_user }}
+      - GF_SMTP_PASSWORD={{ vault_grafana_smtp_password }}
+      - GF_SMTP_FROM_ADDRESS={{ monitoring_grafana_smtp_user }}
+      - GF_SMTP_FROM_NAME={{ monitoring_grafana_smtp_name }}
+    networks:
+      - monitoring
+
+  loki:
+    image: {{ monitoring_loki_docker_image }}
+    container_name: loki
+    restart: unless-stopped
+    ports:
+      - "{{ monitoring_loki_port }}:{{ monitoring_loki_port }}"
+    volumes:
+      - {{ monitoring_loki_config_filepath }}:{{ monitoring_loki_config_filepath }}:ro
+      - loki-data:/{{ monitoring_loki_data_directory }}
+    command: -config.file={{ monitoring_loki_config_filepath }}
+    networks:
+      - monitoring
+
+volumes:
+  prometheus-data:
+  grafana-data:
+  loki-data:
+
+networks:
+  monitoring:
+    driver: bridge
+    name: monitoring

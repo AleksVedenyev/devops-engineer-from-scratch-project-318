@@ -1,0 +1,77 @@
+# Образы
+monitoring_prometheus_docker_image: "prom/prometheus:latest"
+monitoring_grafana_docker_image: "grafana/grafana:latest"
+monitoring_loki_docker_image: "grafana/loki:latest"
+
+# Сетевые настройки
+monitoring_loopback_host: "127.0.0.1"
+monitoring_prometheus_port: "9090"
+monitoring_grafana_port: "3000"
+monitoring_node_exporter_port: "9100"
+monitoring_node_nginx_exporter_port: "9113"
+monitoring_loki_port: "3100"
+monitoring_loki_grpc_port: "9096"
+monitoring_app_host_internal_ip: "10.131.0.14"
+monitoring_app_domain: aleks-devops.ru
+
+# Настройки для SMTP сервера Grafana
+monitoring_grafana_smtp_host: "smtp.yandex.ru:465"
+monitoring_grafana_smtp_user: "okato88@yandex.ru"
+monitoring_grafana_smtp_name: "Grafana Alerts"
+
+# Учетные данные
+monitoring_owner: "root"
+monitoring_group: "root"
+monitoring_auth_basic_username: "metrics-collector"
+
+# Таргеты для скрапинга
+monitoring_prometheus_config_target_node_exporter: "{{ monitoring_app_host_internal_ip }}:{{ monitoring_node_exporter_port }}"
+monitoring_prometheus_config_target_app_actuator: "{{ monitoring_app_domain }}"
+monitoring_prometheus_config_metrics_path_app: "/actuator/prometheus"
+monitoring_prometheus_config_target_nginx_exporter: "{{ monitoring_app_host_internal_ip }}:{{ monitoring_node_nginx_exporter_port }}"
+
+# Пути на целевом хосте (ВМ)
+monitoring_prometheus_config_file_path: "/etc/prometheus/prometheus.yml"
+monitoring_docker_compose_filepath: "/opt/monitoring"
+monitoring_prometheus_rules_filepath: "/etc/prometheus/rules"
+
+monitoring_grafana_provisioning_dir: "/etc/grafana/provisioning"
+monitoring_grafana_prometheus_datasources_filepath: "/etc/grafana/provisioning/datasources/prometheus.yml"
+monitoring_grafana_loki_datasources_filepath: "/etc/grafana/provisioning/datasources/loki.yml"
+monitoring_grafana_dashboard_configuration_filepath: "/etc/grafana/provisioning/dashboards/dashboard.yml"
+monitoring_grafana_dashboard_json_files_path: "/var/lib/grafana/dashboards"
+monitoring_grafana_alerting_files_path: "/etc/grafana/provisioning/alerting"
+
+monitoring_loki_config_filepath: "/etc/loki/loki-config.yml"
+
+
+# Шаблоны и файлы (templates/files внутри роли)
+monitoring_prometheus_src_config_file: "prometheus.yml.j2"
+monitoring_docker_compose_src_file: "docker-compose.yml.j2"
+monitoring_grafana_prometheus_datasources_src_file: "grafana/provisioning/datasources/prometheus.yml.j2"
+monitoring_grafana_dashboard_configuration_src_file: "grafana/provisioning/dashboards/dashboard.yml.j2"
+monitoring_grafana_loki_datasources_src_file: "grafana/provisioning/datasources/loki.yml.j2"
+monitoring_loki_src_config_file: "loki-config.yml.j2"
+
+# Переменные конфигурации Loki
+monitoring_loki_data_directory: "/var/lib/loki"
+monitoring_loki_config_storage_type: "filesystem"
+monitoring_loki_config_date: "2026-10-01"
+
+# Список шаблонов правил алертов
+monitoring_prometheus_rules_templates:
+  - "app_rules.yml"
+  - "node_rules.yml"
+
+# Список файлов дашбордов Grafana
+monitoring_grafana_dasboards_json_files:
+  - "grafana/dashboards/application_http.json"
+  - "grafana/dashboards/application_state.json"
+  - "grafana/dashboards/system_resources.json"
+  - "grafana/dashboards/status_page.json"
+  - "grafana/dashboards/reverse_proxy.json"
+  - "grafana/dashboards/logs.json"
+
+# Список правил алертов Grafana
+monitoring_grafana_alert_rules_files:
+  - "grafana/alerts/alerts.yaml"

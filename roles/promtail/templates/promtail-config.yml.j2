@@ -1,0 +1,49 @@
+server:
+  http_listen_port: {{ promtail_http_listen_port }}
+  grpc_listen_port: {{ promtail_grpc_listen_port }}
+positions:
+  filename: {{ promtail_positions_directory }}
+clients:
+  - url: {{ promtail_loki_server_url }}
+scrape_configs:
+  - job_name: nginx
+    static_configs:
+      - targets: [localhost]
+        labels:
+          job: nginx
+          env: prod
+          host: {{ inventory_hostname }}  
+          __path__: {{ promtail_nginx_logs_path }}/*.log
+    pipeline_stages:
+      # Парсим JSON и извлекаем поля
+      - json:
+          expressions:
+            level: level
+            path: path
+            status: status
+            request_time: request_time
+      - labels:
+          level:
+          status:
+      - timestamp:
+          source: time
+          format: RFC3339
+
+  - job_name: app
+    docker_sd_configs:
+      - host: unix://{{ promtail_docker_sock_path }}
+        refresh_interval: 5s
+    relabel_configs:
+      - target_label: job
+        replacement: app
+      - target_label: env
+        replacement: prod
+      - target_label: host
+        replacement: {{ inventory_hostname }}
+      # Получаем имя контейнера
+      - source_labels: ['__meta_docker_container_name']
+        regex: '/(.*)'
+        target_label: 'container'
+      - source_labels: ['container']
+        regex: '{{ promtail_app_container_name }}'
+        action: keep

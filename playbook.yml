@@ -29,6 +29,7 @@
         - processes
     - { role: nginx_prometheus_exporter, tags: [setup] }
     - { role: ufw_rules, tags: [setup] }
+    - { role: promtail, tags: [setup] }
     - { role: deploy, tags: [deploy] }
 
   tasks:
@@ -45,7 +46,7 @@
   become: true
   roles:
     - { role: geerlingguy.docker, tags: [monitoring_setup] }
-    - { role: monitoring_config, tags: [monitoring_setup] }
+    - { role: monitoring, tags: [monitoring_setup] }
     
 
 

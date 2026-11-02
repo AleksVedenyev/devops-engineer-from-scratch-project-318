@@ -78,6 +78,8 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
+          dashboardUid: ""
+          panelId: 0
           noDataState: Alerting
           execErrState: Error
           for: 2m
@@ -164,6 +166,8 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
+          dashboardUid: ""
+          panelId: 0
           noDataState: KeepLast
           execErrState: Error
           for: 5m
@@ -254,6 +258,8 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
+          dashboardUid: ""
+          panelId: 0
           noDataState: NoData
           execErrState: Error
           for: 1m
@@ -338,6 +344,8 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
+          dashboardUid: ""
+          panelId: 0
           noDataState: Alerting
           execErrState: Error
           for: 2m
@@ -426,6 +434,8 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
+          dashboardUid: ""
+          panelId: 0
           noDataState: NoData
           execErrState: Error
           for: 15m
@@ -510,6 +520,8 @@ groups:
                 maxDataPoints: 43200
                 refId: C
                 type: threshold
+          dashboardUid: ""
+          panelId: 0
           noDataState: NoData
           execErrState: Error
           for: 5m
@@ -519,6 +531,98 @@ groups:
           labels:
             service: node
             severity: warning
+          isPaused: false
+          notification_settings:
+            receiver: Email
+    - orgId: 1
+      name: loki-alerts
+      folder: Alerts
+      interval: 1m
+      rules:
+        - uid: fg32uqcf2jxtsa
+          title: High 5xx level
+          condition: C
+          data:
+            - refId: A
+              queryType: range
+              relativeTimeRange:
+                from: 300
+                to: 0
+              datasourceUid: P8E80F9AEF21F6940
+              model:
+                datasource:
+                    type: loki
+                    uid: P8E80F9AEF21F6940
+                editorMode: code
+                expr: sum(rate({job="nginx", status=~"5.."}[5m])) / sum(rate({job="nginx"}[5m])) * 100
+                instant: true
+                intervalMs: 1000
+                maxDataPoints: 43200
+                queryType: range
+                refId: A
+            - refId: reducer
+              queryType: expression
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 0
+                            - 0
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params: []
+                      reducer:
+                        params: []
+                        type: avg
+                      type: query
+                datasource:
+                    name: Expression
+                    type: __expr__
+                    uid: __expr__
+                expression: A
+                intervalMs: 1000
+                maxDataPoints: 43200
+                reducer: last
+                refId: reducer
+                type: reduce
+            - refId: C
+              queryType: expression
+              datasourceUid: __expr__
+              model:
+                conditions:
+                    - evaluator:
+                        params:
+                            - 5
+                        type: gt
+                      operator:
+                        type: and
+                      query:
+                        params:
+                            - C
+                      reducer:
+                        params: []
+                        type: last
+                      type: query
+                datasource:
+                    type: __expr__
+                    uid: __expr__
+                expression: reducer
+                intervalMs: 1000
+                maxDataPoints: 43200
+                refId: C
+                type: threshold
+          noDataState: NoData
+          execErrState: Error
+          for: 5m
+          annotations:
+            description: '"За последние 5 минут доля ответов 5xx превысила порог в 5%."'
+            summary: '"Высокий процент ошибок Nginx 5xx: {{ $value | printf \"%.2f\" }}%"'
+          labels:
+            service: node
+            severity: critical
           isPaused: false
           notification_settings:
             receiver: Email
