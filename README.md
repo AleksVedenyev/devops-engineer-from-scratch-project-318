@@ -295,6 +295,73 @@ After changing alert rules or dashboards, redeploy the monitoring stack with:
 make monitoring_setup
 ```
 
+## Logs: Promtail + Loki
+
+Promtail and Loki are configured for centralized log collection.
+
+### Promtail
+
+Promtail is installed on the application server as a Docker container and restarted automatically.
+
+It collects:
+- JSON logs from the application container
+- Nginx access/error logs
+
+Promtail adds the following labels:
+- `job`
+- `env`
+- `host`
+
+The `host` label is set from Ansible inventory data, so it is stable and does not depend on shell environment variables.
+
+### Loki
+
+Loki runs on the monitoring server as a Docker container with a persistent volume.
+
+The service is deployed with Ansible and is isolated inside the monitoring network.
+
+### Grafana datasource
+
+Grafana is configured with a Loki datasource through provisioning.
+
+### Dashboards and LogQL
+
+A separate logs dashboard is configured in Grafana.
+
+It contains LogQL queries for:
+- 5xx errors
+- latency / slow requests
+- search by IP
+
+### Log alerting
+
+A log-based alert is configured for 5xx error spikes:
+- the alert fires when 5xx rate is above 5% for 5 minutes
+
+### Nginx logs
+
+Nginx access logs are written in JSON and parsed by Promtail.
+
+The following fields are available for filtering:
+- `path`
+- `status`
+- `request_time`
+
+### Verification
+
+End-to-end log collection is verified by stopping the application container and observing 502 responses in Nginx logs.  
+The logs appear in Loki and are visible in Grafana.
+
+Useful queries:
+- `{job="nginx"}`
+- `{job="nginx_access", status="502"}`
+
+After changing Promtail, Loki or log dashboards, redeploy the monitoring stack with:
+
+```
+make monitoring_setup
+```
+
 ### Verification commands
 
 Run on the application server (ports 9090 and 9100 are not reachable from outside):
