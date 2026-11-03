@@ -4,22 +4,22 @@ requirements:
 	ansible-galaxy install -r requirements.yml
 
 setup:
-	ansible-playbook playbook.yml --tags setup
+	cd ansible && ansible-playbook playbook.yml --tags setup
 
 deploy:
-	ansible-playbook playbook.yml --tags deploy -e "deploy_image_tag=$(IMAGE_TAG)"
+	cd ansible && ansible-playbook playbook.yml --tags deploy -e "deploy_image_tag=$(IMAGE_TAG)"
 
 monitoring_setup:
-	ansible-playbook playbook.yml --tags monitoring_setup
+	cd ansible && ansible-playbook playbook.yml --tags monitoring_setup
 
 install-lint:
 	pipx install ansible-lint
 
 lint:
-	ansible-lint
+	cd ansible && ansible-lint playbook.yml
 
 test:
-	ansible all -m ping
+	cd ansible && ansible all -m ping
 	nc -vz aleks-devops.ru 80
 	nc -vz aleks-devops.ru 443
 
