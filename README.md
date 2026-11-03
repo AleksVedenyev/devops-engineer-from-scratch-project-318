@@ -51,7 +51,7 @@ make monitoring_setup
 ## Requirements
 
 - Ansible
-- ansile-lint
+- ansible-lint
 - SSH access to the target servers
 - Vault password file for encrypted variables, if you use `inventory/group_vars/*/vault.yml`
 
@@ -106,17 +106,19 @@ The file is ignored by git and is not committed to the repository.
 
 The repository includes the following helper targets:
 
+- `make install-lint` — install `ansible-lint` into a virtual environment via `pipx`
 - `make lint` — run `ansible-lint`
 - `make test` — run smoke check for the infrastructure
 - `make smoke` — quick services availability checks with `curl`
 
+`pipx` is required for `make install-lint`, because the system Python on this machine is externally managed and does not allow installing packages globally.
 These checks help validate that the playbooks are repeatable and the deployed services are reachable.
 
 ## Ports, URLs and notifications
 
 ### Application server
 
-- `80** / `443` — Nginx
+- `80` / `443` — Nginx
 - `8080` — application (localhost only)
 - `9090` — Spring Actuator management port (localhost only)
 - `9100` — Node Exporter, allowed only from the internal IP of the monitoring server (UFW and Security Group).
@@ -187,7 +189,7 @@ Application metrics (Spring Boot Actuator / Micrometer):
 
 ### Monitoring server (Prometheus)
 
-Prometheus Grafana and Loki run on a separate VM from the `monitoring` group of the inventory. They are deployed together with Ansible and can be redeployed at any time with one command:
+Prometheus, Grafana and Loki run on a separate VM from the `monitoring` group of the inventory. They are deployed together with Ansible and can be redeployed at any time with one command:
 
 ```
 make monitoring_setup
@@ -419,6 +421,7 @@ curl -i https://aleks-devops.ru/actuator/health
 curl -i https://aleks-devops.ru/actuator/prometheus
 curl -u <user>:<password> https://aleks-devops.ru/actuator/prometheus
 ```
+
 The second command returns `401`, the other two return `200`.
 
 ## Assets
