@@ -112,6 +112,7 @@ The repository includes the following helper targets:
 - `make smoke` — quick services availability checks with `curl`
 
 `pipx` is required for `make install-lint`, because the system Python on this machine is externally managed and does not allow installing packages globally.
+
 These checks help validate that the playbooks are repeatable and the deployed services are reachable.
 
 ## Ports, URLs and notifications
