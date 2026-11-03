@@ -20,6 +20,8 @@ lint:
 
 test:
 	ansible all -m ping
+	nc -vz aleks-devops.ru 80
+	nc -vz aleks-devops.ru 443
 
 smoke:
 	@curl -f -s -o /dev/null http://aleks-devops.ru && echo "Приложение доступно!" || echo "Приложение недоступно!"

@@ -3,10 +3,12 @@
   community.docker.docker_image_pull:
     name: "{{ monitoring_prometheus_docker_image }}"
 
+# Скачиваем образ Grafana
 - name: Pull an grafana image
   community.docker.docker_image_pull:
     name: "{{ monitoring_grafana_docker_image }}"
 
+# Скачиваем образ Loki
 - name: Pull an loki image
   community.docker.docker_image_pull:
     name: "{{ monitoring_loki_docker_image }}"
@@ -112,7 +114,7 @@
       - "{{ monitoring_prometheus_config_file_path }}:{{ monitoring_prometheus_config_file_path }}:ro"
       - "{{ monitoring_prometheus_rules_filepath }}:{{ monitoring_prometheus_rules_filepath }}:ro"
 
-# Запускаем Prometheus и Grafana через Docker Compose
+# Запускаем Prometheus, Grafana и Loki в Docker Compose
 - name: Starting Docker Compose
   community.docker.docker_compose_v2:
     project_src: "{{ monitoring_docker_compose_filepath }}"

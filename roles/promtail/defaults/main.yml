@@ -1,16 +1,25 @@
+# Docker
 promtail_docker_image: "grafana/promtail:latest"
 promtail_container_name: "promtail"
+
+# Сетевые настройки Loki и Promtail
 promtail_loki_server_ip: "10.131.0.4"
 promtail_loki_server_port: "3100"
 promtail_http_listen_port: "9080"
 promtail_grpc_listen_port: "0"
+promtail_loki_server_url: "http://{{ promtail_loki_server_ip }}:{{ promtail_loki_server_port }}/loki/api/v1/push"
+
+# Пути к файлам конфигурации на ВМ
 promtail_positions_directory: "/var/lib/promtail/positions.yml"
 promtail_config_src_file: "promtail-config.yml.j2"
 promtail_config_filepath: "/etc/promtail/promtail-config.yml"
+
+# Права доступа
+promtail_config_owner: "root"
+promtail_config_group: "root"
+
+# Источники логов и Docker
 promtail_docker_containers_path: "/var/lib/docker/containers"
 promtail_docker_sock_path: "/var/run/docker.sock"
 promtail_nginx_logs_path: "/var/log/nginx"
-promtail_config_owner: "root"
-promtail_config_group: "root"
 promtail_app_container_name: "project-devops-deploy"
-promtail_loki_server_url: "http://{{ promtail_loki_server_ip }}:{{ promtail_loki_server_port }}/loki/api/v1/push"

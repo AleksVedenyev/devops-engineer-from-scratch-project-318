@@ -19,7 +19,7 @@ monitoring_grafana_smtp_host: "smtp.yandex.ru:465"
 monitoring_grafana_smtp_user: "okato88@yandex.ru"
 monitoring_grafana_smtp_name: "Grafana Alerts"
 
-# Учетные данные
+# Права доступа
 monitoring_owner: "root"
 monitoring_group: "root"
 monitoring_auth_basic_username: "metrics-collector"

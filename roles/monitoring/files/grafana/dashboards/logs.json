@@ -294,7 +294,7 @@
                       "spec": {
                         "direction": "backward",
                         "editorMode": "code",
-                        "expr": "{job=\"nginx\"} | json | remote_addr = \"$client_ip\"",
+                        "expr": "{job=\"nginx\"} | json | remote_addr = ip(\"$client_ip\")",
                         "queryType": "range"
                       }
                     },
@@ -427,7 +427,7 @@
           "name": "client_ip",
           "current": {
             "text": "",
-            "value": ""
+            "value": "0.0.0.0/0"
           },
           "query": "",
           "hide": "dontHide",
