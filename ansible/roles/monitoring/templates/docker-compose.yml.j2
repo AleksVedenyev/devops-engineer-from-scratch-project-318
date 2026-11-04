@@ -39,7 +39,7 @@ services:
     container_name: loki
     restart: unless-stopped
     ports:
-      - "{{ monitoring_loki_port }}:{{ monitoring_loki_port }}"
+      - "{{ monitoring_server_internal_ip }}:{{ monitoring_loki_port }}:{{ monitoring_loki_port }}"
     volumes:
       - {{ monitoring_loki_config_filepath }}:{{ monitoring_loki_config_filepath }}:ro
       - loki-data:/{{ monitoring_loki_data_directory }}

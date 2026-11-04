@@ -13,7 +13,7 @@ groups:
             relativeTimeRange:
               from: 600
               to: 0
-            datasourceUid: PBFA97CFB590B2093
+            datasourceUid: prometheus
             model:
               editorMode: code
               exemplar: false
@@ -103,10 +103,10 @@ groups:
             relativeTimeRange:
               from: 600
               to: 0
-            datasourceUid: PBFA97CFB590B2093
+            datasourceUid: prometheus
             model:
               editorMode: code
-              expr: (rate(http_server_requests_seconds_count{status=~"5.."}[5m]) / rate(http_server_requests_seconds_count[5m])) * 100
+              expr: (sum(rate(http_server_requests_seconds_count{status=~"5.."}[5m])) / sum(rate(http_server_requests_seconds_count[5m]))) * 100
               instant: false
               intervalMs: 1000
               legendFormat: __auto
@@ -197,7 +197,7 @@ groups:
             relativeTimeRange:
               from: 600
               to: 0
-            datasourceUid: PBFA97CFB590B2093
+            datasourceUid: prometheus
             model:
               editorMode: code
               exemplar: false
@@ -284,7 +284,7 @@ groups:
             relativeTimeRange:
               from: 600
               to: 0
-            datasourceUid: PBFA97CFB590B2093
+            datasourceUid: prometheus
             model:
               editorMode: code
               expr: up{job="node"}
@@ -373,7 +373,7 @@ groups:
             relativeTimeRange:
               from: 600
               to: 0
-            datasourceUid: PBFA97CFB590B2093
+            datasourceUid: prometheus
             model:
               editorMode: code
               expr: (node_filesystem_avail_bytes{mountpoint="/"} / node_filesystem_size_bytes{mountpoint="/"}) * 100
@@ -461,7 +461,7 @@ groups:
             relativeTimeRange:
               from: 600
               to: 0
-            datasourceUid: PBFA97CFB590B2093
+            datasourceUid: prometheus
             model:
               editorMode: code
               expr: (1 - node_memory_MemAvailable_bytes / node_memory_MemTotal_bytes) * 100
@@ -553,11 +553,11 @@ groups:
             relativeTimeRange:
               from: 300
               to: 0
-            datasourceUid: P8E80F9AEF21F6940
+            datasourceUid: loki
             model:
               datasource:
                 type: loki
-                uid: P8E80F9AEF21F6940
+                uid: loki
               editorMode: code
               expr: sum(rate({job="nginx", status=~"5.."}[5m])) / sum(rate({job="nginx"}[5m])) * 100
               instant: true

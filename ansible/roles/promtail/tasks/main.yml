@@ -14,7 +14,8 @@
   ansible.builtin.template:
     src: "{{ promtail_config_src_file }}"
     dest: "{{ promtail_config_filepath }}"
-    mode: "0644"
+    mode: "0640"
+  notify: Reload Promtail configuration
 
 - name: Pull an Promtail image
   community.docker.docker_image_pull:
@@ -28,7 +29,7 @@
     state: started
     restart_policy: unless-stopped
     ports:
-      - "{{ promtail_http_listen_port }}:{{ promtail_http_listen_port }}"
+      - "{{ promtail_app_server_internal_ip }}:{{ promtail_http_listen_port }}:{{ promtail_http_listen_port }}"
     volumes:
       - "{{ promtail_positions_directory | dirname }}:{{ promtail_positions_directory | dirname }}"
       - "{{ promtail_config_filepath }}:{{ promtail_config_filepath }}:ro"

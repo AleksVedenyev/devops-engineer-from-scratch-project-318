@@ -62,7 +62,7 @@
                       "group": "loki",
                       "version": "v0",
                       "datasource": {
-                        "name": "P8E80F9AEF21F6940"
+                        "name": "loki"
                       },
                       "spec": {
                         "direction": "backward",
@@ -159,7 +159,7 @@
                       "group": "loki",
                       "version": "v0",
                       "datasource": {
-                        "name": "P8E80F9AEF21F6940"
+                        "name": "loki"
                       },
                       "spec": {
                         "direction": "backward",
@@ -224,7 +224,7 @@
                       "group": "loki",
                       "version": "v0",
                       "datasource": {
-                        "name": "P8E80F9AEF21F6940"
+                        "name": "loki"
                       },
                       "spec": {
                         "direction": "backward",
@@ -289,7 +289,7 @@
                       "group": "loki",
                       "version": "v0",
                       "datasource": {
-                        "name": "P8E80F9AEF21F6940"
+                        "name": "loki"
                       },
                       "spec": {
                         "direction": "backward",

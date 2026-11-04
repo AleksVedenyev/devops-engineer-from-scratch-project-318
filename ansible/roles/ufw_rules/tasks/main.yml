@@ -4,7 +4,7 @@
     port: "{{ item.port }}"
     proto: tcp
     from_ip: "{{ item.from_ip | default('any') }}"
-  loop: "{{ ufw_allowed_ports }}"
+  loop: "{{ ufw_rules_ufw_allowed_ports }}"
 
 - name: Deny everything and enable UFW
   community.general.ufw:

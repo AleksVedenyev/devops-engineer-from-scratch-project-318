@@ -1,5 +1,16 @@
 - name: Prometheus reload config
+  ansible.builtin.command:
+    cmd: docker kill --signal=SIGHUP prometheus
+  changed_when: true
+
+- name: Grafana restart
   community.docker.docker_container:
-    name: prometheus
+    name: grafana
     state: started
-    kill_signal: SIGHUP
+    restart: true
+
+- name: Loki restart
+  community.docker.docker_container:
+    name: loki
+    state: started
+    restart: true

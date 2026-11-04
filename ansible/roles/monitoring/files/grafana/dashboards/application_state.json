@@ -10,18 +10,6 @@
     "creationTimestamp": "2026-10-28T16:26:02Z",
     "labels": {
       "grafana.app/deprecatedInternalID": "3291992473997312"
-    },
-    "annotations": {
-      "grafana.app/createdBy": "access-policy:service",
-      "grafana.app/folder": "dg2lv5fe6whs0c",
-      "grafana.app/managedBy": "classic-file-provisioning",
-      "grafana.app/managerId": "production-dashboards",
-      "grafana.app/sourceChecksum": "14b67267786726b0a3ea06712bf6b665",
-      "grafana.app/sourcePath": "/var/lib/grafana/dashboards/application_state.json",
-      "grafana.app/sourceTimestamp": "1793204077000",
-      "grafana.app/updatedBy": "access-policy:service",
-      "grafana.app/folderTitle": "Infrastructure",
-      "grafana.app/folderUrl": "/dashboards/f/dg2lv5fe6whs0c/infrastructure"
     }
   },
   "spec": {
@@ -62,7 +50,7 @@
                     "hidden": false,
                     "query": {
                       "datasource": {
-                        "name": "PBFA97CFB590B2093"
+                        "name": "prometheus"
                       },
                       "group": "prometheus",
                       "kind": "DataQuery",
@@ -178,7 +166,7 @@
                     "hidden": false,
                     "query": {
                       "datasource": {
-                        "name": "PBFA97CFB590B2093"
+                        "name": "prometheus"
                       },
                       "group": "prometheus",
                       "kind": "DataQuery",
@@ -260,7 +248,7 @@
                     "hidden": false,
                     "query": {
                       "datasource": {
-                        "name": "PBFA97CFB590B2093"
+                        "name": "prometheus"
                       },
                       "group": "prometheus",
                       "kind": "DataQuery",
@@ -349,7 +337,7 @@
                     "hidden": false,
                     "query": {
                       "datasource": {
-                        "name": "PBFA97CFB590B2093"
+                        "name": "prometheus"
                       },
                       "group": "prometheus",
                       "kind": "DataQuery",
@@ -561,7 +549,7 @@
           "options": [],
           "query": {
             "datasource": {
-              "name": "PBFA97CFB590B2093"
+              "name": "prometheus"
             },
             "group": "prometheus",
             "kind": "DataQuery",
@@ -595,7 +583,7 @@
           "options": [],
           "query": {
             "datasource": {
-              "name": "PBFA97CFB590B2093"
+              "name": "prometheus"
             },
             "group": "prometheus",
             "kind": "DataQuery",

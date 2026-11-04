@@ -1,0 +1,4 @@
+- name: Reload Promtail configuration
+  ansible.builtin.command:
+    cmd: docker kill --signal=SIGHUP promtail
+  changed_when: true

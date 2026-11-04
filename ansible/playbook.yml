@@ -50,3 +50,11 @@
   roles:
     - { role: geerlingguy.docker, tags: [monitoring_setup] }
     - { role: monitoring, tags: [monitoring_setup] }
+    - role: ufw_rules
+      tags: monitoring_setup
+      vars:
+        ufw_rules_ufw_allowed_ports:
+          - { port: "22" }
+          - { port: "9090" }
+          - { port: "3000" }
+          - { port: "3100", from_ip: "10.131.0.14" }

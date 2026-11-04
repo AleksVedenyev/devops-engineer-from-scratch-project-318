@@ -9,7 +9,7 @@
     state: started
     restart_policy: always
     ports:
-      - "{{ nginx_prometheus_exporter_loopback_port }}:{{ nginx_prometheus_exporter_loopback_port }}"
+      - "{{ nginx_prometheus_exporter_app_server_internal_ip }}:{{ nginx_prometheus_exporter_port }}:{{ nginx_prometheus_exporter_port }}"
     command:
       - "--nginx.scrape-uri=http://host.docker.internal{{ nginx_prometheus_exporter_endpoint }}"
     etc_hosts:

@@ -12,6 +12,7 @@ monitoring_node_nginx_exporter_port: "9113"
 monitoring_loki_port: "3100"
 monitoring_loki_grpc_port: "9096"
 monitoring_app_host_internal_ip: "10.131.0.14"
+monitoring_server_internal_ip: "10.131.0.4"
 monitoring_app_domain: aleks-devops.ru
 
 # Настройки для SMTP сервера Grafana
@@ -23,6 +24,7 @@ monitoring_grafana_smtp_name: "Grafana Alerts"
 monitoring_owner: "root"
 monitoring_group: "root"
 monitoring_auth_basic_username: "metrics-collector"
+monitoring_group_prometheus: "65534"
 
 # Таргеты для скрапинга
 monitoring_prometheus_config_target_node_exporter: "{{ monitoring_app_host_internal_ip }}:{{ monitoring_node_exporter_port }}"
@@ -75,3 +77,4 @@ monitoring_grafana_dasboards_json_files:
 # Список правил алертов Grafana
 monitoring_grafana_alert_rules_files:
   - "grafana/alerts/alerts.yaml"
+  - "grafana/alerts/contact_points.yaml"
