@@ -400,10 +400,16 @@ Useful queries:
 - `{job="nginx"}`
 - `{job="nginx", status="502"}`
 
-After changing Promtail, Loki or log dashboards, redeploy the monitoring stack with:
+After changing Loki or log dashboards, redeploy the monitoring stack with:
 
 ```
 make monitoring_setup
+```
+
+After changing Promtail redeploy with:
+
+```
+make setup
 ```
 
 ### Verification commands
