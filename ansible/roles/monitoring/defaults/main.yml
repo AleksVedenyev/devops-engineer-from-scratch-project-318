@@ -11,14 +11,9 @@ monitoring_node_exporter_port: "9100"
 monitoring_node_nginx_exporter_port: "9113"
 monitoring_loki_port: "3100"
 monitoring_loki_grpc_port: "9096"
-monitoring_app_host_internal_ip: "10.131.0.14"
-monitoring_server_internal_ip: "10.131.0.4"
-monitoring_app_domain: aleks-devops.ru
-
-# Настройки для SMTP сервера Grafana
-monitoring_grafana_smtp_host: "smtp.yandex.ru:465"
-monitoring_grafana_smtp_user: "okato88@yandex.ru"
-monitoring_grafana_smtp_name: "Grafana Alerts"
+monitoring_app_host_internal_ip: "{{ hostvars['app_server']['internal_ip'] }}"
+monitoring_server_internal_ip: "{{ hostvars['monitoring_server']['internal_ip'] }}"
+monitoring_app_domain: "{{ app_domain }}"
 
 # Права доступа
 monitoring_owner: "root"
@@ -45,7 +40,6 @@ monitoring_grafana_dashboard_json_files_path: "/var/lib/grafana/dashboards"
 monitoring_grafana_alerting_files_path: "/etc/grafana/provisioning/alerting"
 
 monitoring_loki_config_filepath: "/etc/loki/loki-config.yml"
-
 
 # Шаблоны и файлы (templates/files внутри роли)
 monitoring_prometheus_src_config_file: "prometheus.yml.j2"
@@ -77,4 +71,3 @@ monitoring_grafana_dasboards_json_files:
 # Список правил алертов Grafana
 monitoring_grafana_alert_rules_files:
   - "grafana/alerts/alerts.yaml"
-  - "grafana/alerts/contact_points.yaml"

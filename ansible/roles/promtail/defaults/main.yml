@@ -3,8 +3,8 @@ promtail_docker_image: "grafana/promtail:latest"
 promtail_container_name: "promtail"
 
 # Сетевые настройки Loki и Promtail
-promtail_app_server_internal_ip: "10.131.0.14"
-promtail_loki_server_ip: "10.131.0.4"
+promtail_app_server_internal_ip: "{{ hostvars['app_server']['internal_ip'] }}"
+promtail_loki_server_ip: "{{ hostvars['monitoring_server']['internal_ip'] }}"
 promtail_loki_server_port: "3100"
 promtail_http_listen_port: "9080"
 promtail_grpc_listen_port: "0"

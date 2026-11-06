@@ -1,4 +1,24 @@
 app_user: "deploy"
 app_user_email: "aleks.vedenev@gmail.com"
-app_domain: aleks-devops.ru
 app_rootdir: "/var/www/html"
+
+# Переменные для запуска приложения в Docker
+app_image_repository: "aleksved/project-devops-deploy"
+app_management_server_port: "9090"
+app_spring_profiles_active: "prod"
+app_spring_datasource_url: "jdbc:postgresql://rc1e-skni2b0npu3k74lh.mdb.yandexcloud.net:6432/db1?targetServerType=master&sslmode=require"
+app_storage_s3_region: "ru-central1"
+app_storage_s3_bucket: "prod-users-files"
+app_storage_s3_endpoint: "https://storage.yandexcloud.net"
+
+# Настройка правил доступа UFW для application-сервера
+ufw_rules_allowed_ports:
+  - port: "22"
+  - port: "80"
+  - port: "443"
+  - port: "9100"
+    from_ip: "{{ hostvars['monitoring_server']['internal_ip'] }}"
+  - port: "9113"
+    from_ip: "{{ hostvars['monitoring_server']['internal_ip'] }}"
+  - port: "9080"
+    from_ip: "{{ hostvars['monitoring_server']['internal_ip'] }}"

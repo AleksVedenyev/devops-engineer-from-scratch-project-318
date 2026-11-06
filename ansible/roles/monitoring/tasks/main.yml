@@ -82,13 +82,21 @@
     mode: '0644'
   loop: "{{ monitoring_grafana_dasboards_json_files }}"
 
-# Копируем файлы правил алертов Grafana и конфигурацию contact_point на целевой хост
+# Копируем файлы правил алертов Grafana на целевой хост
 - name: Copying Grafana alert rules files
   ansible.builtin.copy:
     src: "{{ item }}"
     dest: "{{ monitoring_grafana_alerting_files_path }}/{{ item | basename }}"
     mode: '0644'
   loop: "{{ monitoring_grafana_alert_rules_files }}"
+  notify: Grafana restart
+
+# Копируем файл конфигурации contact_point Grafana на целевой хост
+- name: Rendering Grafana contact points configuration
+  ansible.builtin.template:
+    src: grafana/alerts/contact_points.yaml.j2
+    dest: "{{ monitoring_grafana_alerting_files_path }}/contact_points.yaml"
+    mode: '0644'
   notify: Grafana restart
 
 # Копируем шаблон конфигурации Loki на целевой хост

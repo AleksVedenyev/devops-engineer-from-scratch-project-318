@@ -1,1 +1,15 @@
 monitoring_user: "monitoring"
+
+# Настройки для SMTP сервера Grafana
+monitoring_grafana_alert_email: "okato88@yandex.ru"
+monitoring_grafana_smtp_host: "smtp.yandex.ru:465"
+monitoring_grafana_smtp_user: "{{ monitoring_grafana_alert_email }}"
+monitoring_grafana_smtp_name: "Grafana Alerts"
+
+# Настройка правил доступа UFW для monitoring-сервера
+ufw_rules_allowed_ports:
+  - port: "22"
+  - port: "9090"
+  - port: "3000"
+  - port: "3100"
+    from_ip: "{{ hostvars['app_server']['internal_ip'] }}"
