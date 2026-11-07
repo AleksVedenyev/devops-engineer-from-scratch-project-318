@@ -43,7 +43,7 @@ server {
     }
 
     location /actuator/health {
-        proxy_pass http://{{ nginx_config_app_loopback_host }}:{{ nginx_config_app_management_server_port }};
+        proxy_pass http://{{ nginx_config_app_loopback_host }}:{{ app_management_server_port }};
         access_log off;
         include proxy_params;
     }
@@ -51,7 +51,7 @@ server {
     location /actuator/prometheus {
         auth_basic "Metrics";
         auth_basic_user_file {{ nginx_config_auth_basic_user_file_path }};
-        proxy_pass http://{{ nginx_config_app_loopback_host }}:{{ nginx_config_app_management_server_port }};
+        proxy_pass http://{{ nginx_config_app_loopback_host }}:{{ app_management_server_port }};
         access_log off;
         include proxy_params;
     }

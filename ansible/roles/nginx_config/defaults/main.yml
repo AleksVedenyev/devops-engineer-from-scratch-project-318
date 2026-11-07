@@ -16,7 +16,6 @@ nginx_config_ssl_certificate_key: "/etc/letsencrypt/live/{{ app_domain }}/privke
 nginx_config_app_domain: "{{ app_domain }}"
 nginx_config_app_loopback_host: "127.0.0.1"
 nginx_config_app_loopback_port: "8080"
-nginx_config_app_management_server_port: "9090"
 # Адрес контейнера (диапазон), из которого nginx-exporter ходит на /stub_status
 nginx_config_exporter_docker_address: "172.17.0.0/16"
 # Устанавливаем формат лога JSON в конексте http
